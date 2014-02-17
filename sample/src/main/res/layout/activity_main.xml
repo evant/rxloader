@@ -1,0 +1,132 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/container"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context="me.tatarka.ipromise.android.example.MainActivity"
+              tools:ignore="MergeRootFrame">
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <Button
+                android:id="@+id/button_launch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Init on Activity Launch"
+                />
+
+        <ProgressBar
+                android:id="@+id/progress_launch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="10dp"
+                style="?android:progressBarStyleSmall"
+                android:visibility="invisible"
+                tools:visibility="visible"
+                />
+    </FrameLayout>
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <Button
+                android:id="@+id/button_init"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Init on Button Press"
+                />
+
+        <ProgressBar
+                android:id="@+id/progress_init"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="10dp"
+                style="?android:progressBarStyleSmall"
+                android:visibility="invisible"
+                tools:visibility="visible"
+                />
+    </FrameLayout>
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <Button
+                android:id="@+id/button_restart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Restart on Button Press"
+                />
+
+        <ProgressBar
+                android:id="@+id/progress_restart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="10dp"
+                style="?android:progressBarStyleSmall"
+                android:visibility="invisible"
+                tools:visibility="visible"
+                />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/button_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Restart Progress on Button Press"
+            />
+
+        <ProgressBar
+            android:id="@+id/progress_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|bottom"
+            style="?android:progressBarStyleHorizontal"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/button_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Restart input on Button Press"
+            />
+
+        <ProgressBar
+            android:id="@+id/progress_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="10dp"
+            style="?android:progressBarStyleSmall"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            />
+    </FrameLayout>
+
+    <EditText
+        android:id="@+id/edit_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Input here"
+        />
+</LinearLayout>
