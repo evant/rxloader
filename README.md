@@ -139,13 +139,13 @@ want to re-request data for your UI, you can save the result in the Activity's
 instance state.
 
 This can be as easy as
-```
+```java
 loaderManager.create(observable, callback).save().start();
 ```
 
 This assumes that the observable's value implements `Parceable`. If it doesn't,
 you can handle saving and restoring it yourself by passing in a `SaveCallback`.
-```
+```java
 loaderManager.create(observable, callback)
   .save(new SaveCallback<Result>() {
     @Override
