@@ -30,11 +30,11 @@ dependencies {
 
 ### Maven
 ```xml
-<repository>
+<dependency>
   <groupId>me.tatarka.rxloader</groupId>
   <artifactId>rxloader</artifactId>
   <version>1.0-SNAPSHOT</version>
-</repository>
+</dependency>
 ```
 
 Usage
