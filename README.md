@@ -1,6 +1,6 @@
 rxloader
 ========
-Asynchronous operations in Android are very hard to get right do to the
+Asynchronous operations in Android are very hard to get right due to the
 Activity lifecycle. AsyncTasks don't handle any of it making them difficult to
 use. Loaders handle many things for you, but have a clunky api and fall down
 anytime you want to do anything more complex than loading data immediately when
