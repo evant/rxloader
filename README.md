@@ -49,7 +49,7 @@ public class MyActivity extends Activity {
 
   public void onCreate(Bundle savedState) {
     // If you are using the support library, 
-    // use RxLoaderManagerComap.get(this) instead.
+    // use RxLoaderManagerCompat.get(this) instead.
     loaderManager = RxLoaderManager.get(this);
 
     loaderManager.create(
