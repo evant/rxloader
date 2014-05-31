@@ -11,20 +11,14 @@ all these things for you with an easy-to-use api.
 
 Install
 -------
-```bash
-git clone git@github.com:evant/rxloader.git
-cd rxloader
-./gradlew install
-```
-
 ### Gradle
 ```groovy
 repositories {
-  mavenLocal()
+  mavenCentral()
 }
 
 dependencies {
-  compile 'me.tatarka.rxloader:rxloader:1.0-SNAPSHOT'
+  compile 'me.tatarka.rxloader:rxloader:1.0'
 }
 ```
 
@@ -33,7 +27,7 @@ dependencies {
 <dependency>
   <groupId>me.tatarka.rxloader</groupId>
   <artifactId>rxloader</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
 </dependency>
 ```
 
