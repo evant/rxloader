@@ -1,7 +1,7 @@
 package me.tatarka.rxloader.sample;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,13 +12,12 @@ import java.util.concurrent.TimeUnit;
 import me.tatarka.rxloader.RxLoader;
 import me.tatarka.rxloader.RxLoader1;
 import me.tatarka.rxloader.RxLoaderManager;
-import me.tatarka.rxloader.RxLoaderManagerCompat;
 import me.tatarka.rxloader.RxLoaderObserver;
 import me.tatarka.rxloader.SaveCallback;
 import rx.Observable;
 import rx.functions.Func1;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
     private static final String DELAY_TASK_INIT = "sleep_task_init";
     private static final String DELAY_TASK_RESTART = "sleep_task_restart";
     private static final String PROGRESS_TASK = "progress_task";
@@ -62,7 +61,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        loaderManager = RxLoaderManagerCompat.get(this);
+        loaderManager = RxLoaderManager.get(this);
 
         setContentView(R.layout.activity_main);
 

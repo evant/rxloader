@@ -5,7 +5,7 @@ import rx.Observer;
 /**
  * A specialized {@link rx.Observer} that can also respond to when it's subscribed.
  *
- * @param <T>
+ * @param <T> the observer value type
  */
 public abstract class RxLoaderObserver<T> implements Observer<T> {
     /**

@@ -31,7 +31,8 @@ public class RxLoaderManager {
     /**
      * Get an instance of the {@code RxLoaderManager} that is tied to the lifecycle of the given
      * {@link android.app.Activity}. If you are using the support library, then you should use
-     * {@link me.tatarka.rxloader.RxLoaderManagerCompat#get(FragmentActivity)} instead.
+     * {@link me.tatarka.rxloader.RxLoaderManagerCompat#get(android.support.v4.app.FragmentActivity)}
+     * instead.
      *
      * @param activity the activity
      * @return the {@code RxLoaderManager}
@@ -53,7 +54,8 @@ public class RxLoaderManager {
     /**
      * Get an instance of the {@code RxLoaderManager} that is tied to the lifecycle of the given
      * {@link android.app.Fragment}. If you are using the support library, then you should use
-     * {@link me.tatarka.rxloader.RxLoaderManagerCompat#get(android.app.Fragment)} instead.
+     * {@link me.tatarka.rxloader.RxLoaderManagerCompat#get(android.support.v4.app.Fragment)}}
+     * instead.
      *
      * @param fragment the fragment
      * @return the {@code RxLoaderManager}
@@ -118,6 +120,7 @@ public class RxLoaderManager {
      *                       manager.
      * @param observableFunc the function that returns the observable to manage
      * @param observer       the observer that receives the observable's callbacks
+     * @param <A>            the argument's type.
      * @param <T>            the observable's value type
      * @return a new {@code RxLoader}
      * @see me.tatarka.rxloader.RxLoader1
@@ -132,7 +135,9 @@ public class RxLoaderManager {
      * should be called in {@link android.app.Activity#onCreate(android.os.Bundle)} or similar.
      *
      * @param observableFunc the function that returns the observable to manage
+     * @param observer       the observer that receives the observable's callbacks
      * @param <T>            the observable's value type
+     * @param <A>            the argument's type.
      * @return a new {@code RxLoader}
      * @see me.tatarka.rxloader.RxLoader
      */
@@ -150,6 +155,8 @@ public class RxLoaderManager {
      * @param observableFunc the function that returns the observable to manage
      * @param observer       the observer that receives the observable's callbacks
      * @param <T>            the observable's value type
+     * @param <A>            the fist argument's type.
+     * @param <B>            the second argument's type.
      * @return a new {@code RxLoader}
      * @see me.tatarka.rxloader.RxLoader1
      */
@@ -163,7 +170,10 @@ public class RxLoaderManager {
      * should be called in {@link android.app.Activity#onCreate(android.os.Bundle)} or similar.
      *
      * @param observableFunc the function that returns the observable to manage
+     * @param observer       the observer that receives the observable's callbacks
      * @param <T>            the observable's value type
+     * @param <A>            the fist argument's type.
+     * @param <B>            the second argument's type.
      * @return a new {@code RxLoader}
      * @see me.tatarka.rxloader.RxLoader
      */

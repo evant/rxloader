@@ -32,6 +32,26 @@ version = '1.0-SNAPSHOT'
 targetCompatibility=1.6
 sourceCompatibility=1.6
 
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
 if (project.hasProperty('sonatype.username') && project.hasProperty('sonatype.password'))
     uploadArchives {
         repositories {

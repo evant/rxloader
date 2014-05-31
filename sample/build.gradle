@@ -23,7 +23,7 @@ android {
 }
 
 dependencies {
-    compile 'me.tatarka.rxloader:rxloader:1.0-SNAPSHOT'
-    //compile project(':rxloader')
-    compile 'com.android.support:appcompat-v7:+'
+    //compile 'me.tatarka.rxloader:rxloader:1.0-SNAPSHOT'
+    compile project(':rxloader')
+    //compile 'com.android.support:appcompat-v7:+'
 }
