@@ -1,7 +1,7 @@
 package me.tatarka.rxloader;
 
 import rx.Observable;
-import rx.util.functions.Func2;
+import rx.functions.Func2;
 
 /**
  * A version of {@link me.tatarka.rxloader.RxLoader} that accepts two arguments to construct the

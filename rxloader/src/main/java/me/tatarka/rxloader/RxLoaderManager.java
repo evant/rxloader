@@ -6,8 +6,8 @@ import android.app.Fragment;
 import android.os.Build;
 
 import rx.Observable;
-import rx.util.functions.Func1;
-import rx.util.functions.Func2;
+import rx.functions.Func1;
+import rx.functions.Func2;
 
 /**
  * A way to manage asynchronous actions in Android using rxjava. It is much easier to get right than

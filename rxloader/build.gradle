@@ -9,6 +9,7 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'signing'
 
 apply plugin: 'propdeps'
 apply plugin: 'propdeps-maven'
@@ -20,9 +21,9 @@ repositories {
 }
 
 dependencies {
-    compile 'com.netflix.rxjava:rxjava-android:0.17.0-RC1'
+    compile 'com.netflix.rxjava:rxjava-android:0.18.4'
     provided 'android:android:4.3_r2'
-    optional 'android.support:compatibility-v4:19.0.1'
+    provided 'android.support:compatibility-v4:19.1.0'
 }
 
 group = 'me.tatarka.rxloader'
@@ -30,3 +31,53 @@ version = '1.0-SNAPSHOT'
 
 targetCompatibility=1.6
 sourceCompatibility=1.6
+
+if (project.hasProperty('sonatype.username') && project.hasProperty('sonatype.password'))
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { deployment -> signing.signPom(deployment) }
+
+                def repoUrl
+                if (project.version.endsWith("SNAPSHOT")) {
+                    repoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+                } else {
+                    repoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                }
+
+                repository(url: repoUrl) {
+                    authentication(
+                            userName: project.getProperty('sonatype.username'),
+                            password: project.getProperty('sonatype.password'))
+                }
+
+                pom.project {
+                    name 'rxloader'
+                    packaging 'jar'
+                    description 'Handles the activity lifecyle for rxjava\'s Observable'
+                    url 'https://github.com/evant/rxloader'
+
+                    scm {
+                        url 'git@github.com:evant/rxloader.git'
+                        connection 'scm:git:git@github.com:evant/rxloader.git'
+                        developerConnection 'scm:git:git@github.com:evant/rxloader.git'
+                    }
+
+                    licenses {
+                        license {
+                            name 'The Apache Software License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution 'repo'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'evant'
+                            name 'Evan Tatarka'
+                        }
+                    }
+                }
+            }
+        }
+    }

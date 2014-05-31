@@ -16,7 +16,7 @@ import me.tatarka.rxloader.RxLoaderManagerCompat;
 import me.tatarka.rxloader.RxLoaderObserver;
 import me.tatarka.rxloader.SaveCallback;
 import rx.Observable;
-import rx.util.functions.Func1;
+import rx.functions.Func1;
 
 public class MainActivity extends ActionBarActivity {
     private static final String DELAY_TASK_INIT = "sleep_task_init";
