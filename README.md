@@ -143,12 +143,12 @@ you can handle saving and restoring it yourself by passing in a `SaveCallback`.
 loaderManager.create(observable, callback)
   .save(new SaveCallback<Result>() {
     @Override
-    public void onSave(String tag, T value, Bundle outBundle) {
+    public void onSave(String tag, Result value, Bundle outBundle) {
       // Save the value in the bundle.
     }
 
     @Override
-    public T onRestore(String tag, Bundle savedState) {
+    public Result onRestore(String tag, Bundle savedState) {
       // Return the value from the bundle.
     }
   }).start();
