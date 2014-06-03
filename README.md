@@ -120,7 +120,7 @@ button was pressed first.
 ### Tags
 It is possible that you have multiple loaders for a given `RxLoaderManager`. In
 that case you must pass each one a unique tag (`loaderManager.create(MY_TAG, 
-obserable, callback)`).
+observable, callback)`).
 This is a string that identifies which callback is attached to which observable
 so it can be reattached on a configuration change.
 
