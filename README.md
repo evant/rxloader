@@ -128,7 +128,7 @@ You may notice the above examples do not have a tag. If none is provided, then
 then `RxLoaderManager#DEFAULT` is used.
 
 ### Saving state
-The Android OS my destroy and recreate your Activity sometimes. If you don't
+The Android OS might destroy and recreate your Activity sometimes. If you don't
 want to re-request data for your UI, you can save the result in the Activity's
 instance state.
 
