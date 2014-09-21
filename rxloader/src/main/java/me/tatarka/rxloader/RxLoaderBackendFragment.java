@@ -26,7 +26,7 @@ public class RxLoaderBackendFragment extends Fragment implements RxLoaderBackend
         setRetainInstance(true);
         helper.onCreate(savedInstanceState);
     }
-
+    
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -57,5 +57,9 @@ public class RxLoaderBackendFragment extends Fragment implements RxLoaderBackend
     @Override
     public void unsubscribeAll() {
         helper.unsubscribeAll();
+    }
+    
+    public RxLoaderBackendFragmentHelper getHelper() {
+        return helper;
     }
 }

@@ -55,4 +55,8 @@ public class RxLoaderBackendFragmentCompat extends Fragment implements RxLoaderB
     public void unsubscribeAll() {
         helper.unsubscribeAll();
     }
+
+    public RxLoaderBackendFragmentHelper getHelper() {
+        return helper;
+    }
 }

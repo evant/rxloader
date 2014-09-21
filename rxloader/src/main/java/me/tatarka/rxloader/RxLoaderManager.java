@@ -43,12 +43,12 @@ public class RxLoaderManager {
             throw new UnsupportedOperationException("Method only valid in api 11 and above, use RxLoaderManagerCompat to support older versions (requires support library)");
         }
 
-        RxLoaderBackendFragment fragment = (RxLoaderBackendFragment) activity.getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-        if (fragment == null) {
-            fragment = new RxLoaderBackendFragment();
-            activity.getFragmentManager().beginTransaction().add(fragment, FRAGMENT_TAG).commit();
+        RxLoaderBackendFragment manager = (RxLoaderBackendFragment) activity.getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        if (manager == null) {
+            manager = new RxLoaderBackendFragment();
+            activity.getFragmentManager().beginTransaction().add(manager, FRAGMENT_TAG).commit();
         }
-        return new RxLoaderManager(fragment);
+        return new RxLoaderManager(manager);
     }
 
     /**
@@ -65,13 +65,25 @@ public class RxLoaderManager {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
             throw new UnsupportedOperationException("Method only valid in api 17 and above, use RxLoaderManagerCompat to support older versions (requires support library)");
         }
+        
+        Activity activity = fragment.getActivity();
+        if (activity == null) {
+            throw new IllegalStateException("Activity must not be null. Make sure you are calling RxLoaderManager.get(fragment) in onActivityCreated()");
+        }
+        
+        RxLoaderBackendFragment activityManager = (RxLoaderBackendFragment) activity.getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        if (activityManager == null) {
+            activityManager = new RxLoaderBackendFragment();
+            activity.getFragmentManager().beginTransaction().add(activityManager, FRAGMENT_TAG).commit();
+        }
 
-        RxLoaderBackendFragment manager = (RxLoaderBackendFragment) fragment.getChildFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        RxLoaderBackendNestedFragment manager = (RxLoaderBackendNestedFragment) fragment.getChildFragmentManager().findFragmentByTag(FRAGMENT_TAG);
 
         if (manager == null) {
-            manager = new RxLoaderBackendFragment();
-            fragment.getChildFragmentManager().beginTransaction().add(fragment, FRAGMENT_TAG).commit();
+            manager = new RxLoaderBackendNestedFragment();
+            fragment.getChildFragmentManager().beginTransaction().add(manager, FRAGMENT_TAG).commit();
         }
+        manager.setHelper(activityManager.getHelper());
         return new RxLoaderManager(manager);
     }
 

@@ -26,8 +26,8 @@ public class RxLoaderFragment extends Fragment implements TestableRxLoaderActivi
     private Semaphore mCompletedSemaphore = new Semaphore(0);
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         mLoaderManager = RxLoaderManager.get(this);
     }
 

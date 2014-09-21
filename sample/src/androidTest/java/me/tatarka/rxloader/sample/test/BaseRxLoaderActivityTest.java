@@ -79,6 +79,7 @@ public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLo
                 getActivity().recreate();
             }
         });
+        createLoader(subject);
         getActivity().waitForStarted();
 
         assertThat(getActivity().isStarted()).isTrue().as("onStarted() called again after a configuration change");
