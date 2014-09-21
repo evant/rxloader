@@ -2,6 +2,7 @@ package me.tatarka.rxloader.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,7 +15,9 @@ import me.tatarka.rxloader.RxLoader1;
 import me.tatarka.rxloader.RxLoaderManager;
 import me.tatarka.rxloader.RxLoaderObserver;
 import me.tatarka.rxloader.SaveCallback;
+import rx.Notification;
 import rx.Observable;
+import rx.functions.Action1;
 import rx.functions.Func1;
 
 public class MainActivity extends Activity {
@@ -35,28 +38,6 @@ public class MainActivity extends Activity {
     ProgressBar progressInput;
     Button buttonInput;
     EditText editInput;
-
-    // Must not have a reference to the activity to prevent leaks
-    private static Observable<String> delay = Observable.timer(2, TimeUnit.SECONDS).map(new Func1<Long, String>() {
-        @Override
-        public String call(Long aLong) {
-            return "Async Complete!";
-        }
-    });
-
-    private static Func1<String, Observable<String>> inputDelay = new Func1<String, Observable<String>>() {
-        @Override
-        public Observable<String> call(final String input) {
-            return Observable.timer(2, TimeUnit.SECONDS).map(new Func1<Long, String>() {
-                @Override
-                public String call(Long aLong) {
-                    return "Async Complete! [" + input + "]";
-                }
-            });
-        }
-    };
-
-    private static Observable<Long> count = Observable.interval(100, TimeUnit.MILLISECONDS).take(100);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +60,7 @@ public class MainActivity extends Activity {
 
         // Start at launch
         loaderManager.create(
-                delay,
+                SampleObservables.delay(),
                 new RxLoaderObserver<String>() {
                     @Override
                     public void onStarted() {
@@ -99,7 +80,7 @@ public class MainActivity extends Activity {
         // Init on button press
         final RxLoader<String> initLoader = loaderManager.create(
                 DELAY_TASK_INIT,
-                delay,
+                SampleObservables.delay(),
                 new RxLoaderObserver<String>() {
                     @Override
                     public void onStarted() {
@@ -136,7 +117,7 @@ public class MainActivity extends Activity {
         // Restart on button press
         final RxLoader<String> restartLoader = loaderManager.create(
                 DELAY_TASK_RESTART,
-                delay,
+                SampleObservables.delay(),
                 new RxLoaderObserver<String>() {
                     @Override
                     public void onStarted() {
@@ -164,7 +145,7 @@ public class MainActivity extends Activity {
         // Progress on button press
         final RxLoader<Long> progressLoader = loaderManager.create(
                 PROGRESS_TASK,
-                count,
+                SampleObservables.count(),
                 new RxLoaderObserver<Long>() {
                     @Override
                     public void onStarted() {
@@ -198,7 +179,7 @@ public class MainActivity extends Activity {
         // Button with input
         final RxLoader1<String, String> inputLoader = loaderManager.create(
                 INPUT_TASK,
-                inputDelay,
+                SampleObservables.inputDelay(),
                 new RxLoaderObserver<String>() {
                     @Override
                     public void onStarted() {
