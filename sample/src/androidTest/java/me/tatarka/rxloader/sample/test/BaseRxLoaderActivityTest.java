@@ -20,6 +20,7 @@ public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLo
     public BaseRxLoaderActivityTest(Class<T> activityClass) {
         super(activityClass);
     }
+    
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -140,9 +141,11 @@ public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLo
                 getActivity().finish();
             }
         });
+        Thread.sleep(500); // Need to wait for onDestroy() to be called.
         subject.onNext("test");
         subject.onCompleted();
         testScheduler.triggerActions();
+        getInstrumentation().waitForIdleSync();
 
         assertThat(getActivity().<String>getNext()).isNull();
         assertThat(getActivity().isCompleted()).isFalse().as("onCompleted() is not called if the activity is destroyed");
@@ -151,7 +154,7 @@ public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLo
         getActivity();
     }
 
-    private <T> RxLoader<T> createLoader(final Observable<T> observable) {
+    protected <T> RxLoader<T> createLoader(final Observable<T> observable) {
         final RxLoader<?>[] currentLoader = new RxLoader<?>[1];
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override

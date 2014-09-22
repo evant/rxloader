@@ -57,7 +57,6 @@ abstract class BaseRxLoader<T> {
 
     private CachingWeakRefSubscriber<T> createSubscriber(Observable<T> observable) {
         CachingWeakRefSubscriber<T> subscriber = new CachingWeakRefSubscriber<T>(observer);
-        observer.onStarted();
         subscriber.setSubscription(observable.observeOn(scheduler).subscribe(subscriber));
         return subscriber;
     }

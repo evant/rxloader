@@ -9,7 +9,7 @@ import rx.Observable;
 /**
  * Created by evan on 9/20/14.
  */
-public class RxLoaderActivityWithSupportFragment extends FragmentActivity implements TestableRxLoaderActivity {
+public class RxLoaderActivityWithSupportFragment extends FragmentActivity implements TestableRxLoaderActivityWithFragment {
     private RxLoaderSupportFragment mFragment;
     
     @Override
@@ -74,5 +74,13 @@ public class RxLoaderActivityWithSupportFragment extends FragmentActivity implem
     @Override
     public boolean isCompleted() {
         return mFragment.isCompleted();
+    }
+
+    @Override
+    public void removeFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .remove(mFragment)
+                .commit();
+        getFragmentManager().executePendingTransactions();
     }
 }

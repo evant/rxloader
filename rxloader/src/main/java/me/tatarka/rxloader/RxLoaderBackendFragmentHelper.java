@@ -28,7 +28,7 @@ class RxLoaderBackendFragmentHelper implements RxLoaderBackend {
     }
     
     public void onDestroy(int id) {
-        unsubscribeAll();
+        unsubscribeAll(id);
         getState(id).subscriptionMap.clear();
     }
 
@@ -117,7 +117,6 @@ class RxLoaderBackendFragmentHelper implements RxLoaderBackend {
     public void unsubscribeAll(int id) {
         for (CachingWeakRefSubscriber subscription : getState(id).subscriptionMap.values()) {
             subscription.unsubscribe();
-            subscription.set(null);
         }
     }
     
