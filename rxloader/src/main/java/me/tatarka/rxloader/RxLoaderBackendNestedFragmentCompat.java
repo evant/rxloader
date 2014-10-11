@@ -20,6 +20,7 @@ import rx.Observer;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxLoaderBackend {
     private WeakReference<RxLoaderBackendFragmentHelper> helperRef;
+    private boolean hasSavedState;
     
     public void setHelper(RxLoaderBackendFragmentHelper helper) {
         helperRef = new WeakReference<RxLoaderBackendFragmentHelper>(helper);
@@ -61,7 +62,7 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (getActivity().isFinishing()) {
+        if (!hasSavedState) {
             RxLoaderBackendFragmentHelper helper = getHelper();
             if (helper != null) {
                 helper.onDestroy(getId());
@@ -72,6 +73,7 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        hasSavedState = true;
         RxLoaderBackendFragmentHelper helper = getHelper();
         if (helper != null) {
             helper.onSaveInstanceState(outState);
