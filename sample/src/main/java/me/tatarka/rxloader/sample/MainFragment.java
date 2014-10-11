@@ -49,6 +49,8 @@ public class MainFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        
+        loaderManager = RxLoaderManager.get(this);
 
         progressLaunch = (ProgressBar) view.findViewById(R.id.progress_launch);
         buttonLaunch = (Button) view.findViewById(R.id.button_launch);
@@ -61,13 +63,6 @@ public class MainFragment extends Fragment {
         progressInput = (ProgressBar) view.findViewById(R.id.progress_input);
         buttonInput = (Button) view.findViewById(R.id.button_input);
         editInput = (EditText) view.findViewById(R.id.edit_input);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        loaderManager = RxLoaderManager.get(this);
 
         // Start at launch
         loaderManager.create(

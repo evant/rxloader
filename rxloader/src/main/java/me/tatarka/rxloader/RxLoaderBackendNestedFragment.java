@@ -2,6 +2,7 @@ package me.tatarka.rxloader;
 
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,28 +21,33 @@ import rx.Observer;
 public class RxLoaderBackendNestedFragment extends Fragment implements RxLoaderBackend {
     private WeakReference<RxLoaderBackendFragmentHelper> helperRef;
     
-    public void setHelper(RxLoaderBackendFragmentHelper helper) {
-        helperRef = new WeakReference<RxLoaderBackendFragmentHelper>(helper);
-    }
-    
     private RxLoaderBackendFragmentHelper getHelper() {
         if (helperRef != null) {
-            return helperRef.get(); 
+            return helperRef.get();
         } else {
-            RxLoaderBackendFragment backendFragment = (RxLoaderBackendFragment) getActivity()
-                    .getFragmentManager().findFragmentByTag(RxLoaderManager.FRAGMENT_TAG);
-            if (backendFragment != null) {
-                RxLoaderBackendFragmentHelper helper = backendFragment.getHelper();
-                helperRef = new WeakReference<RxLoaderBackendFragmentHelper>(helper);
-                return helper;
+            Activity activity = getActivity();
+            if (activity == null) {
+                return null;
             }
+
+            RxLoaderBackendFragment backendFragment = (RxLoaderBackendFragment) activity
+                    .getFragmentManager().findFragmentByTag(RxLoaderManager.FRAGMENT_TAG);
+            if (backendFragment == null) {
+                backendFragment = new RxLoaderBackendFragment();
+                activity.getFragmentManager().beginTransaction()
+                        .add(backendFragment, RxLoaderManager.FRAGMENT_TAG)
+                        .commit();
+            }
+
+            RxLoaderBackendFragmentHelper helper = backendFragment.getHelper();
+            helperRef = new WeakReference<RxLoaderBackendFragmentHelper>(helper);
+            return helper;
         }
-        return null;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         RxLoaderBackendFragmentHelper helper = getHelper();
         if (helper != null) {
             helper.onCreate(getId(), savedInstanceState);

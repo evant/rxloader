@@ -1,6 +1,5 @@
 package me.tatarka.rxloader;
 
-import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
@@ -46,18 +45,11 @@ public final class RxLoaderManagerCompat {
             throw new IllegalStateException("Activity must not be null. Make sure you are calling RxLoaderManager.get(fragment) in onActivityCreated()");
         }
 
-        RxLoaderBackendFragmentCompat activityManager = (RxLoaderBackendFragmentCompat) activity.getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-        if (activityManager == null) {
-            activityManager = new RxLoaderBackendFragmentCompat();
-            activity.getSupportFragmentManager().beginTransaction().add(activityManager, FRAGMENT_TAG).commit();
-        }
-        
         RxLoaderBackendNestedFragmentCompat manager = (RxLoaderBackendNestedFragmentCompat) fragment.getChildFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         if (manager == null) {
             manager = new RxLoaderBackendNestedFragmentCompat();
             fragment.getChildFragmentManager().beginTransaction().add(manager, FRAGMENT_TAG).commit();
         }
-        manager.setHelper(activityManager.getHelper());
         return new RxLoaderManager(manager);
     }
 

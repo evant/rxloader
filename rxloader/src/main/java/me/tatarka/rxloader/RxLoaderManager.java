@@ -70,12 +70,6 @@ public class RxLoaderManager {
         if (activity == null) {
             throw new IllegalStateException("Activity must not be null. Make sure you are calling RxLoaderManager.get(fragment) in onActivityCreated()");
         }
-        
-        RxLoaderBackendFragment activityManager = (RxLoaderBackendFragment) activity.getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-        if (activityManager == null) {
-            activityManager = new RxLoaderBackendFragment();
-            activity.getFragmentManager().beginTransaction().add(activityManager, FRAGMENT_TAG).commit();
-        }
 
         RxLoaderBackendNestedFragment manager = (RxLoaderBackendNestedFragment) fragment.getChildFragmentManager().findFragmentByTag(FRAGMENT_TAG);
 
@@ -83,7 +77,6 @@ public class RxLoaderManager {
             manager = new RxLoaderBackendNestedFragment();
             fragment.getChildFragmentManager().beginTransaction().add(manager, FRAGMENT_TAG).commit();
         }
-        manager.setHelper(activityManager.getHelper());
         return new RxLoaderManager(manager);
     }
 

@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 
 import java.lang.ref.WeakReference;
 
@@ -28,20 +29,29 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
         if (helperRef != null) {
             return helperRef.get(); 
         } else {
-            RxLoaderBackendFragment backendFragment = (RxLoaderBackendFragment) getActivity()
-                    .getFragmentManager().findFragmentByTag(RxLoaderManager.FRAGMENT_TAG);
-            if (backendFragment != null) {
-                RxLoaderBackendFragmentHelper helper = backendFragment.getHelper();
-                helperRef = new WeakReference<RxLoaderBackendFragmentHelper>(helper);
-                return helper;
+            FragmentActivity activity = getActivity();
+            if (activity == null) {
+                return null;
             }
+
+            RxLoaderBackendFragmentCompat backendFragment = (RxLoaderBackendFragmentCompat) activity
+                    .getSupportFragmentManager().findFragmentByTag(RxLoaderManager.FRAGMENT_TAG);
+            if (backendFragment == null) {
+                backendFragment = new RxLoaderBackendFragmentCompat();
+                activity.getSupportFragmentManager().beginTransaction()
+                        .add(backendFragment, RxLoaderManager.FRAGMENT_TAG)
+                        .commit();
+            }
+
+            RxLoaderBackendFragmentHelper helper = backendFragment.getHelper();
+            helperRef = new WeakReference<RxLoaderBackendFragmentHelper>(helper);
+            return helper;
         }
-        return null;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         RxLoaderBackendFragmentHelper helper = getHelper();
         if (helper != null) {
             helper.onCreate(getId(), savedInstanceState);
