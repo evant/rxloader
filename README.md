@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-  compile 'me.tatarka.rxloader:rxloader:1.0'
+  compile 'me.tatarka.rxloader:rxloader:1.0.1'
 }
 ```
 
@@ -27,7 +27,7 @@ dependencies {
 <dependency>
   <groupId>me.tatarka.rxloader</groupId>
   <artifactId>rxloader</artifactId>
-  <version>1.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
@@ -42,6 +42,39 @@ public class MyActivity extends Activity {
   private RxLoaderManager loaderManager;
 
   public void onCreate(Bundle savedState) {
+    // If you are using the support library, 
+    // use RxLoaderManagerCompat.get(this) instead.
+    loaderManager = RxLoaderManager.get(this);
+
+    loaderManager.create(
+      asyncThatReturnsObservable(),
+      new RxLoaderObserver<Result>() {
+        @Override
+        public void onStarted() {
+          // Show your progress indicator.
+        }
+
+        @Override
+        public void onNext(Result result) {
+          // Hide your progress indicator and show the result.
+        }
+
+        @Override
+        public void onError(Throwable error) {
+          // Hide your progress indicator and show that there was an error.
+        }
+      }
+    ).start(); // Make sure you call this to kick things off.
+  }
+}
+```
+
+Or in a fragment
+```java
+public class MyFragment extends Fragment {
+  private RxLoaderManager loaderManager;
+
+  public void onViewCreated(View view, Bundle savedInstanceState) {
     // If you are using the support library, 
     // use RxLoaderManagerCompat.get(this) instead.
     loaderManager = RxLoaderManager.get(this);
@@ -117,6 +150,38 @@ Note that the loader is still created in `onCreate()` and not on the button
 callback. This is necessary to handle configuration changes properly if the
 button was pressed first.
 
+### Passing arguments
+If you want to pass arguments to your observable, you can use one of the overloads that takes a `Func1<Arg, Observable<T>>` or `Func2<Arg1, Arg2, Observable<T>>``.
+
+```java
+final RxLoader1<String, String> inputLoader = loaderManager.create(
+  new Func1<String, Observable<String>>() {
+    @Override
+    public Observable<String> call(final String input) {
+      return asyncMethod(input);
+    }
+  },
+  new RxLoaderObserver<String>() {
+    @Override
+    public void onStarted() {
+      // Show your progress indicator.
+    }
+
+    @Override
+    public void onNext(String message) {
+      // Hide your progress indicator and show the result.
+    }
+  }
+);
+
+buttonInput.setOnClickListener(new View.OnClickListener() {
+  @Override
+  public void onClick(View v) {
+    inputLoader.restart(editInput.getText().toString());
+  }
+});
+```
+
 ### Tags
 It is possible that you have multiple loaders for a given `RxLoaderManager`. In
 that case you must pass each one a unique tag (`loaderManager.create(MY_TAG, 
@@ -153,3 +218,6 @@ loaderManager.create(observable, callback)
     }
   }).start();
 ```
+
+### A note about usage
+RxLoader does nothing to effect to thread in which the observable you passed in is run on. That means if you use   `Observable.create(...)` you may find that your "background" action is run on the UI thread. Fixing this is easy, just use `observable.subscribeOn(...)` to run the observable on the given scheduler.
