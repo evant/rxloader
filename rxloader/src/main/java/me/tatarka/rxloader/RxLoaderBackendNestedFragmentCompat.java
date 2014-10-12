@@ -55,7 +55,7 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
         super.onActivityCreated(savedInstanceState);
         RxLoaderBackendFragmentHelper helper = getHelper();
         if (helper != null) {
-            helper.onCreate(getId(), savedInstanceState);
+            helper.onCreate(getStateId(), savedInstanceState);
         }
     }
 
@@ -65,7 +65,7 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
         if (!hasSavedState) {
             RxLoaderBackendFragmentHelper helper = getHelper();
             if (helper != null) {
-                helper.onDestroy(getId());
+                helper.onDestroy(getStateId());
             }
         }
     }
@@ -84,7 +84,7 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
     public <T> CachingWeakRefSubscriber<T> get(String tag) {
         RxLoaderBackendFragmentHelper helper = getHelper();
         if (helper != null) {
-            return helper.get(getId(), tag);
+            return helper.get(getStateId(), tag);
         }
         return null;
     }
@@ -93,7 +93,7 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
     public <T> void put(String tag, CachingWeakRefSubscriber<T> subscriber) {
         RxLoaderBackendFragmentHelper helper = getHelper();
         if (helper != null) {
-            helper.put(getId(), tag, subscriber);
+            helper.put(getStateId(), tag, subscriber);
         }
     }
 
@@ -101,7 +101,7 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
     public <T> void setSave(String tag, Observer<T> observer, WeakReference<SaveCallback<T>> saveCallbackRef) {
         RxLoaderBackendFragmentHelper helper = getHelper();
         if (helper != null) {
-            helper.setSave(getId(), tag, observer, saveCallbackRef);
+            helper.setSave(getStateId(), tag, observer, saveCallbackRef);
         }
     }
 
@@ -109,7 +109,16 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
     public void unsubscribeAll() {
         RxLoaderBackendFragmentHelper helper = getHelper();
         if (helper != null) {
-            helper.unsubscribeAll(getId());
+            helper.unsubscribeAll(getStateId());
         }
+    }
+
+    private String getStateId() {
+        Fragment parentFragment = getParentFragment();
+        String stateId = parentFragment.getTag();
+        if (stateId == null) {
+            stateId = Integer.toString(parentFragment.getId());
+        }
+        return stateId;
     }
 }

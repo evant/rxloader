@@ -39,4 +39,49 @@ public abstract class BaseRxLoaderActivityWithFragmentTest<T extends Activity & 
         assertThat(getActivity().<String>getNext()).isNull();
         assertThat(getActivity().isCompleted()).isFalse().as("onCompleted() is not called if the activity is destroyed");
     }
+    
+    @SmallTest
+    public void testMultipleLoaderFragments() throws InterruptedException {
+        final String fragment1 = "fragment1";
+        final String fragment2 = "fragment2";
+        TestSubject<String> subject1 = TestSubject.create(testScheduler);
+        TestSubject<String> subject2 = TestSubject.create(testScheduler);
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().addFragment(fragment1);
+                getActivity().addFragment(fragment2);
+            }
+        });
+        createLoader(subject1, fragment1).start();
+        createLoader(subject2, fragment2).start();
+        getActivity().waitForStarted(fragment1); 
+        getActivity().waitForStarted(fragment2);
+        subject1.onNext("test1");
+        subject2.onNext("test2");
+        subject1.onCompleted();
+        subject2.onCompleted();
+        testScheduler.triggerActions();
+        getActivity().waitForNext(fragment1);
+        getActivity().waitForCompleted(fragment1);
+        getActivity().waitForNext(fragment2);
+        getActivity().waitForCompleted(fragment2);
+
+        assertThat(getActivity().<String>getNext(fragment1)).isEqualTo("test1").as("result is value delivered from observable");
+        assertThat(getActivity().isCompleted(fragment1)).isTrue().as("onCompleted() called when observable completed");
+
+        assertThat(getActivity().<String>getNext(fragment2)).isEqualTo("test2").as("result is value delivered from observable");
+        assertThat(getActivity().isCompleted(fragment2)).isTrue().as("onCompleted() called when observable completed");
+    }
+
+    protected <T> RxLoader<T> createLoader(final Observable<T> observable, final String tag) {
+        final RxLoader<?>[] currentLoader = new RxLoader<?>[1];
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                currentLoader[0] = getActivity().createLoader(observable, tag);
+            }
+        });
+        return (RxLoader<T>) currentLoader[0];
+    }
 }

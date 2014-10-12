@@ -1,8 +1,8 @@
 package me.tatarka.rxloader.sample;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +13,9 @@ import android.widget.ProgressBar;
 import me.tatarka.rxloader.RxLoader;
 import me.tatarka.rxloader.RxLoader1;
 import me.tatarka.rxloader.RxLoaderManager;
+import me.tatarka.rxloader.RxLoaderManagerCompat;
 import me.tatarka.rxloader.RxLoaderObserver;
 import me.tatarka.rxloader.SaveCallback;
-import me.tatarka.rxloader.sample.R;
-import me.tatarka.rxloader.sample.SampleObservables;
 
 /**
  * Created by evan on 9/20/14.
@@ -50,7 +49,7 @@ public class MainFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
-        loaderManager = RxLoaderManager.get(this);
+        loaderManager = RxLoaderManagerCompat.get(this);
 
         progressLaunch = (ProgressBar) view.findViewById(R.id.progress_launch);
         buttonLaunch = (Button) view.findViewById(R.id.button_launch);

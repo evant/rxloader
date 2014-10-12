@@ -15,16 +15,32 @@ public class RxLoaderActivityWithSupportFragment extends FragmentActivity implem
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         if (savedInstanceState == null) {
-            mFragment = new RxLoaderSupportFragment();
             getSupportFragmentManager().beginTransaction()
-                    .add(android.R.id.content, mFragment)
+                    .add(android.R.id.content, mFragment = new RxLoaderSupportFragment())
                     .commit();
-            getFragmentManager().executePendingTransactions();
+            getSupportFragmentManager().executePendingTransactions();
         } else {
             mFragment = (RxLoaderSupportFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
         }
+    }
+
+    @Override
+    public void removeFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .remove(getFragment())
+                .commit();
+        getSupportFragmentManager().executePendingTransactions();
+    }
+
+    @Override
+    public <T> RxLoader<T> createLoader(Observable<T> observable, String tag) {
+        return findFragmentByTag(tag).createLoader(observable);
+    }
+
+    public RxLoaderSupportFragment findFragmentByTag(String tag) {
+        return (RxLoaderSupportFragment) getSupportFragmentManager().findFragmentByTag(tag);
     }
 
     public RxLoaderSupportFragment getFragment() {
@@ -32,55 +48,103 @@ public class RxLoaderActivityWithSupportFragment extends FragmentActivity implem
     }
 
     @Override
+    public void waitForNext(String tag) throws InterruptedException {
+        findFragmentByTag(tag).waitForNext();
+    }
+
+    @Override
+    public <T> T getNext(String tag) {
+        return findFragmentByTag(tag).getNext();
+    }
+
+    @Override
+    public void waitForError(String tag) throws InterruptedException {
+        findFragmentByTag(tag).waitForError();
+    }
+
+    @Override
+    public Throwable getError(String tag) {
+        return findFragmentByTag(tag).getError();
+    }
+
+    @Override
+    public void waitForStarted(String tag) throws InterruptedException {
+        findFragmentByTag(tag).waitForStarted();
+    }
+
+    @Override
+    public boolean isStarted(String tag) {
+        return findFragmentByTag(tag).isStarted();
+    }
+
+    @Override
+    public void waitForCompleted(String tag) throws InterruptedException {
+        findFragmentByTag(tag).waitForCompleted();
+    }
+
+    @Override
+    public boolean isCompleted(String tag) {
+        return findFragmentByTag(tag).isCompleted();
+    }
+
+    @Override
+    public void addFragment(String tag) {
+        getSupportFragmentManager().beginTransaction()
+                .add(new RxLoaderSupportFragment(), tag)
+                .commit();
+        getSupportFragmentManager().executePendingTransactions();
+    }
+
+    @Override
+    public void removeFragment(String tag) {
+        getSupportFragmentManager().beginTransaction()
+                .remove(findFragmentByTag(tag))
+                .commit();
+        getSupportFragmentManager().executePendingTransactions();
+    }
+
+    @Override
     public <T> RxLoader<T> createLoader(Observable<T> observable) {
-        return mFragment.createLoader(observable);
+        return getFragment().createLoader(observable);
     }
 
     @Override
     public void waitForNext() throws InterruptedException {
-        mFragment.waitForNext();
+        getFragment().waitForNext();
     }
 
     @Override
     public <T> T getNext() {
-        return mFragment.getNext();
+        return getFragment().getNext();
     }
 
     @Override
     public void waitForError() throws InterruptedException {
-        mFragment.waitForError();
+        getFragment().waitForError();
     }
 
     @Override
     public Throwable getError() {
-        return mFragment.getError();
+        return getFragment().getError();
     }
 
     @Override
     public void waitForStarted() throws InterruptedException {
-        mFragment.waitForStarted();
+        getFragment().waitForStarted();
     }
 
     @Override
     public boolean isStarted() {
-        return mFragment.isStarted();
+        return getFragment().isStarted();
     }
 
     @Override
     public void waitForCompleted() throws InterruptedException {
-        mFragment.waitForCompleted();
+        getFragment().waitForCompleted();
     }
 
     @Override
     public boolean isCompleted() {
-        return mFragment.isCompleted();
-    }
-
-    @Override
-    public void removeFragment() {
-        getSupportFragmentManager().beginTransaction()
-                .remove(mFragment)
-                .commit();
-        getFragmentManager().executePendingTransactions();
+        return getFragment().isCompleted();
     }
 }
