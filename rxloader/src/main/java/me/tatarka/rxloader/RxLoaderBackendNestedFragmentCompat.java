@@ -21,6 +21,7 @@ import rx.Observer;
 public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxLoaderBackend {
     private WeakReference<RxLoaderBackendFragmentHelper> helperRef;
     private boolean hasSavedState;
+    private String stateId;
     
     public void setHelper(RxLoaderBackendFragmentHelper helper) {
         helperRef = new WeakReference<RxLoaderBackendFragmentHelper>(helper);
@@ -114,11 +115,23 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
     }
 
     private String getStateId() {
-        Fragment parentFragment = getParentFragment();
-        String stateId = parentFragment.getTag();
-        if (stateId == null) {
-            stateId = Integer.toString(parentFragment.getId());
+        if (stateId != null) {
+            return stateId;
         }
+
+        Fragment parentFragment = getParentFragment();
+        stateId = parentFragment.getTag();
+        if (stateId == null) {
+            int id = parentFragment.getId();
+            if (id > 0) {
+                stateId = Integer.toString(id);
+            }
+        }
+        
+        if (stateId == null) {
+            throw new IllegalStateException("Fragment dose not have a valid id");
+        }
+        
         return stateId;
     }
 }
