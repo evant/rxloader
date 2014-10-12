@@ -35,6 +35,22 @@ public class RxLoaderActivityWithFragment extends Activity implements TestableRx
     }
 
     @Override
+    public void detachFragment() {
+        getFragmentManager().beginTransaction()
+                .detach(getFragment())
+                .commit();
+        getFragmentManager().executePendingTransactions();
+    }
+
+    @Override
+    public void reattchFragment() {
+        getFragmentManager().beginTransaction()
+                .attach(getFragment())
+                .commit();
+        getFragmentManager().executePendingTransactions();
+    }
+
+    @Override
     public <T> RxLoader<T> createLoader(Observable<T> observable, String tag) {
         return findFragmentByTag(tag).createLoader(observable);
     }
@@ -91,14 +107,6 @@ public class RxLoaderActivityWithFragment extends Activity implements TestableRx
     public void addFragment(String tag) {
         getFragmentManager().beginTransaction()
                 .add(new RxLoaderFragment(), tag)
-                .commit();
-        getFragmentManager().executePendingTransactions();
-    }
-
-    @Override
-    public void removeFragment(String tag) {
-        getFragmentManager().beginTransaction()
-                .remove(findFragmentByTag(tag))
                 .commit();
         getFragmentManager().executePendingTransactions();
     }

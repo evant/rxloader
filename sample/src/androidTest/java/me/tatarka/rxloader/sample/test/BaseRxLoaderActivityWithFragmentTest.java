@@ -41,6 +41,58 @@ public abstract class BaseRxLoaderActivityWithFragmentTest<T extends Activity & 
     }
     
     @SmallTest
+    public void testLoaderStartDetachFragment() throws InterruptedException {
+        TestSubject<String> subject = TestSubject.create(testScheduler);
+        createLoader(subject).start();
+        getActivity().waitForStarted();
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().detachFragment();
+            }
+        });
+        Thread.sleep(500); // Need to wait for onDestroy() to be called.
+        subject.onNext("test");
+        subject.onCompleted();
+        testScheduler.triggerActions();
+        getInstrumentation().waitForIdleSync();
+
+        assertThat(getActivity().<String>getNext()).isNull();
+        assertThat(getActivity().isCompleted()).isFalse().as("onCompleted() is not called if the fragment is detached");
+    }
+    
+    @SmallTest
+    public void testLoaderStartDetachAndAttachFragment() throws InterruptedException {
+        TestSubject<String> subject = TestSubject.create(testScheduler);
+        createLoader(subject).start();
+        getActivity().waitForStarted();
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().detachFragment();
+            }
+        });
+        Thread.sleep(500); // Need to wait for onDestroy() to be called.
+        subject.onNext("test");
+        subject.onCompleted();
+        testScheduler.triggerActions();
+        getInstrumentation().waitForIdleSync();
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().reattchFragment();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        createLoader(subject);
+        getActivity().waitForNext();
+        getActivity().waitForCompleted();
+
+        assertThat(getActivity().<String>getNext()).isEqualTo("test").as("result is value delivered from observable");
+        assertThat(getActivity().isCompleted()).isTrue().as("onCompleted() called when fragment is reattached");
+    }
+    
+    @SmallTest
     public void testMultipleLoaderFragments() throws InterruptedException {
         final String fragment1 = "fragment1";
         final String fragment2 = "fragment2";

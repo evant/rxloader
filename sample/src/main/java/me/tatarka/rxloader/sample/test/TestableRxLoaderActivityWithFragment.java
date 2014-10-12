@@ -8,7 +8,11 @@ import rx.Observable;
  */
 public interface TestableRxLoaderActivityWithFragment extends TestableRxLoaderActivity {
     void removeFragment();
-    
+
+    void detachFragment();
+
+    void reattchFragment();
+
     <T> RxLoader<T> createLoader(Observable<T> observable, String tag);
 
     void waitForNext(String tag) throws InterruptedException;
@@ -28,6 +32,4 @@ public interface TestableRxLoaderActivityWithFragment extends TestableRxLoaderAc
     boolean isCompleted(String tag);
 
     void addFragment(String tag);
-    
-    void removeFragment(String tag);
 }

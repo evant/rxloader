@@ -21,6 +21,7 @@ import rx.Observer;
 public class RxLoaderBackendNestedFragment extends Fragment implements RxLoaderBackend {
     private WeakReference<RxLoaderBackendFragmentHelper> helperRef;
     private boolean hasSavedState;
+    private boolean isViewDetached;
     private String stateId;
     
     private RxLoaderBackendFragmentHelper getHelper() {
@@ -109,7 +110,16 @@ public class RxLoaderBackendNestedFragment extends Fragment implements RxLoaderB
             helper.unsubscribeAll(getStateId());
         }
     }
-    
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        RxLoaderBackendFragmentHelper helper = getHelper();
+        if (helper != null) {
+            helper.onDestroyView(getStateId());
+        }
+    }
+
     private String getStateId() {
         if (stateId != null) {
             return stateId;

@@ -47,6 +47,12 @@ class RxLoaderBackendFragmentHelper implements RxLoaderBackend {
         }
     }
 
+    public void onDestroyView(String id) {
+        for (CachingWeakRefSubscriber subscription : getState(id).subscriptionMap.values()) {
+            subscription.set(null);
+        }
+    }
+
     @Override
     public <T> CachingWeakRefSubscriber<T> get(String tag) {
         return get(null, tag);

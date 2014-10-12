@@ -35,6 +35,22 @@ public class RxLoaderActivityWithSupportFragment extends FragmentActivity implem
     }
 
     @Override
+    public void detachFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .detach(getFragment())
+                .commit();
+        getSupportFragmentManager().executePendingTransactions();
+    }
+
+    @Override
+    public void reattchFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .attach(getFragment())
+                .commit();
+        getSupportFragmentManager().executePendingTransactions();
+    }
+
+    @Override
     public <T> RxLoader<T> createLoader(Observable<T> observable, String tag) {
         return findFragmentByTag(tag).createLoader(observable);
     }
@@ -91,14 +107,6 @@ public class RxLoaderActivityWithSupportFragment extends FragmentActivity implem
     public void addFragment(String tag) {
         getSupportFragmentManager().beginTransaction()
                 .add(new RxLoaderSupportFragment(), tag)
-                .commit();
-        getSupportFragmentManager().executePendingTransactions();
-    }
-
-    @Override
-    public void removeFragment(String tag) {
-        getSupportFragmentManager().beginTransaction()
-                .remove(findFragmentByTag(tag))
                 .commit();
         getSupportFragmentManager().executePendingTransactions();
     }

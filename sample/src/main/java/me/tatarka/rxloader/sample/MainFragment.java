@@ -209,4 +209,20 @@ public class MainFragment extends Fragment {
             }
         });
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        progressLaunch = null;
+        buttonLaunch = null;
+        progressInit = null;
+        buttonInit = null;
+        progressRestart = null;
+        buttonRestart = null;
+        progressProgress = null;
+        buttonProgress = null;
+        progressInput = null;
+        buttonInput = null;
+        editInput = null;
+    }
 }
