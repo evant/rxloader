@@ -21,9 +21,9 @@ import rx.Observer;
 public class RxLoaderBackendNestedFragment extends Fragment implements RxLoaderBackend {
     private WeakReference<RxLoaderBackendFragmentHelper> helperRef;
     private boolean hasSavedState;
-    private boolean isViewDetached;
+    private boolean wasDetached;
     private String stateId;
-    
+
     private RxLoaderBackendFragmentHelper getHelper() {
         if (helperRef != null) {
             return helperRef.get();
@@ -69,6 +69,16 @@ public class RxLoaderBackendNestedFragment extends Fragment implements RxLoaderB
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        RxLoaderBackendFragmentHelper helper = getHelper();
+        if (helper != null) {
+            helper.onDetach(getStateId());
+        }
+        wasDetached = true;
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         hasSavedState = true;
@@ -88,10 +98,10 @@ public class RxLoaderBackendNestedFragment extends Fragment implements RxLoaderB
     }
 
     @Override
-    public <T> void put(String tag, CachingWeakRefSubscriber<T> subscriber) {
+    public <T> void put(String tag, BaseRxLoader<T> rxLoader, CachingWeakRefSubscriber<T> subscriber) {
         RxLoaderBackendFragmentHelper helper = getHelper();
         if (helper != null) {
-            helper.put(getStateId(), tag, subscriber);
+            helper.put(getStateId(), tag, wasDetached ? null : rxLoader, subscriber);
         }
     }
 
@@ -124,7 +134,7 @@ public class RxLoaderBackendNestedFragment extends Fragment implements RxLoaderB
         if (stateId != null) {
             return stateId;
         }
-        
+
         Fragment parentFragment = getParentFragment();
         stateId = parentFragment.getTag();
         if (stateId == null) {

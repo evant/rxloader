@@ -40,11 +40,6 @@ public final class RxLoaderManagerCompat {
      * @return the {@code RxLoaderManager}
      */
     public static RxLoaderManager get(Fragment fragment) {
-        FragmentActivity activity = fragment.getActivity();
-        if (activity == null) {
-            throw new IllegalStateException("Activity must not be null. Make sure you are calling RxLoaderManager.get(fragment) in onActivityCreated()");
-        }
-
         RxLoaderBackendNestedFragmentCompat manager = (RxLoaderBackendNestedFragmentCompat) fragment.getChildFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         if (manager == null) {
             manager = new RxLoaderBackendNestedFragmentCompat();

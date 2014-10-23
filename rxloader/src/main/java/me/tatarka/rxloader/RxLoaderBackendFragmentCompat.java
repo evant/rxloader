@@ -16,6 +16,7 @@ import rx.Observer;
  */
 public class RxLoaderBackendFragmentCompat extends Fragment implements RxLoaderBackend {
     private RxLoaderBackendFragmentHelper helper = new RxLoaderBackendFragmentHelper();
+    private boolean wasDetached;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,13 @@ public class RxLoaderBackendFragmentCompat extends Fragment implements RxLoaderB
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        helper.onDetach();
+        wasDetached = true;
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         helper.onSaveInstanceState(outState);
@@ -42,8 +50,8 @@ public class RxLoaderBackendFragmentCompat extends Fragment implements RxLoaderB
     }
 
     @Override
-    public <T> void put(String tag, CachingWeakRefSubscriber<T> subscriber) {
-        helper.put(tag, subscriber);
+    public <T> void put(String tag, BaseRxLoader<T> rxLoader, CachingWeakRefSubscriber<T> subscriber) {
+        helper.put(tag, wasDetached ? null : rxLoader, subscriber);
     }
 
     @Override

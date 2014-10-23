@@ -19,6 +19,7 @@ import rx.Observer;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class RxLoaderBackendFragment extends Fragment implements RxLoaderBackend {
     private RxLoaderBackendFragmentHelper helper = new RxLoaderBackendFragmentHelper();
+    private boolean wasDetached;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,11 +27,18 @@ public class RxLoaderBackendFragment extends Fragment implements RxLoaderBackend
         setRetainInstance(true);
         helper.onCreate(savedInstanceState);
     }
-    
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         helper.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        helper.onDetach();
+        wasDetached = true;
     }
 
     @Override
@@ -45,8 +53,8 @@ public class RxLoaderBackendFragment extends Fragment implements RxLoaderBackend
     }
 
     @Override
-    public <T> void put(String tag, CachingWeakRefSubscriber<T> subscriber) {
-        helper.put(tag, subscriber);
+    public <T> void put(String tag, BaseRxLoader<T> rxLoader, CachingWeakRefSubscriber<T> subscriber) {
+        helper.put(tag, wasDetached ? null : rxLoader, subscriber);
     }
 
     @Override
@@ -58,7 +66,7 @@ public class RxLoaderBackendFragment extends Fragment implements RxLoaderBackend
     public void unsubscribeAll() {
         helper.unsubscribeAll();
     }
-    
+
     public RxLoaderBackendFragmentHelper getHelper() {
         return helper;
     }

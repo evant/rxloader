@@ -21,15 +21,16 @@ import rx.Observer;
 public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxLoaderBackend {
     private WeakReference<RxLoaderBackendFragmentHelper> helperRef;
     private boolean hasSavedState;
+    private boolean wasDetached;
     private String stateId;
-    
+
     public void setHelper(RxLoaderBackendFragmentHelper helper) {
         helperRef = new WeakReference<RxLoaderBackendFragmentHelper>(helper);
     }
-    
+
     private RxLoaderBackendFragmentHelper getHelper() {
         if (helperRef != null) {
-            return helperRef.get(); 
+            return helperRef.get();
         } else {
             FragmentActivity activity = getActivity();
             if (activity == null) {
@@ -72,6 +73,16 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        RxLoaderBackendFragmentHelper helper = getHelper();
+        if (helper != null) {
+            helper.onDetach(getStateId());
+        }
+        wasDetached = true;
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         hasSavedState = true;
@@ -91,10 +102,10 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
     }
 
     @Override
-    public <T> void put(String tag, CachingWeakRefSubscriber<T> subscriber) {
+    public <T> void put(String tag, BaseRxLoader<T> rxLoader, CachingWeakRefSubscriber<T> subscriber) {
         RxLoaderBackendFragmentHelper helper = getHelper();
         if (helper != null) {
-            helper.put(getStateId(), tag, subscriber);
+            helper.put(getStateId(), tag, wasDetached ? null : rxLoader, subscriber);
         }
     }
 
@@ -136,11 +147,11 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
                 stateId = Integer.toString(id);
             }
         }
-        
+
         if (stateId == null) {
             throw new IllegalStateException("Fragment dose not have a valid id");
         }
-        
+
         return stateId;
     }
 }

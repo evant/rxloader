@@ -28,7 +28,7 @@ abstract class BaseRxLoader<T> {
     protected BaseRxLoader<T> start(Observable<T> observable) {
         CachingWeakRefSubscriber<T> subscriber = manager.get(tag);
         if (subscriber == null) {
-            manager.put(tag, createSubscriber(observable));
+            manager.put(tag, this, createSubscriber(observable));
         }
         return this;
     }
@@ -38,7 +38,7 @@ abstract class BaseRxLoader<T> {
         if (subscriber != null) {
             subscriber.unsubscribe();
         }
-        manager.put(tag, createSubscriber(observable));
+        manager.put(tag, this, createSubscriber(observable));
         if (saveCallback != null) {
             manager.setSave(tag, observer, new WeakReference<SaveCallback<T>>(saveCallback));
         }

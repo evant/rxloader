@@ -20,7 +20,7 @@ repositories {
 dependencies {
     compile 'com.netflix.rxjava:rxjava-android:0.20.4'
     provided 'android:android:4.3_r2'
-    provided 'android.support:compatibility-v4:19.1.0'
+    provided 'android.support:compatibility-v4:21.0.0'
 }
 
 group = 'me.tatarka.rxloader'

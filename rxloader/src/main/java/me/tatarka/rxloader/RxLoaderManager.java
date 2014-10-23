@@ -65,11 +65,6 @@ public class RxLoaderManager {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
             throw new UnsupportedOperationException("Method only valid in api 17 and above, use RxLoaderManagerCompat to support older versions (requires support library)");
         }
-        
-        Activity activity = fragment.getActivity();
-        if (activity == null) {
-            throw new IllegalStateException("Activity must not be null. Make sure you are calling RxLoaderManager.get(fragment) in onActivityCreated()");
-        }
 
         RxLoaderBackendNestedFragment manager = (RxLoaderBackendNestedFragment) fragment.getChildFragmentManager().findFragmentByTag(FRAGMENT_TAG);
 

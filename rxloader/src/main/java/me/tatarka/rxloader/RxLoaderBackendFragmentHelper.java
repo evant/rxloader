@@ -12,11 +12,11 @@ import rx.Observer;
 class RxLoaderBackendFragmentHelper implements RxLoaderBackend {
     private State state = new State();
     private Map<String, State> childFragmentStates = new HashMap<String, State>();
-    
+
     public void onCreate(Bundle savedState) {
         onCreate(null, savedState);
     }
-    
+
     public void onCreate(String id, Bundle savedState) {
         getState(id).savedState = savedState;
     }
@@ -24,16 +24,24 @@ class RxLoaderBackendFragmentHelper implements RxLoaderBackend {
     public void onDestroy() {
         onDestroy(null);
     }
-    
+
     public void onDestroy(String id) {
         unsubscribeAll(id);
         getState(id).subscriptionMap.clear();
     }
 
+    public void onDetach() {
+        onDetach(null);
+    }
+
+    public void onDetach(String id) {
+        getState(id).rxLoader = null;
+    }
+
     public void onSaveInstanceState(Bundle outState) {
         onSaveInstanceState(null, outState);
     }
-    
+
     public void onSaveInstanceState(String id, Bundle outState) {
         for (SaveItem<?> item : getState(id).saveItemMap.values()) {
             onSave(item, outState);
@@ -57,18 +65,19 @@ class RxLoaderBackendFragmentHelper implements RxLoaderBackend {
     public <T> CachingWeakRefSubscriber<T> get(String tag) {
         return get(null, tag);
     }
-    
+
     public <T> CachingWeakRefSubscriber<T> get(String id, String tag) {
         return getState(id).subscriptionMap.get(tag);
     }
 
     @Override
-    public <T> void put(final String tag, CachingWeakRefSubscriber<T> subscriber) {
-        put(null, tag, subscriber);
+    public <T> void put(final String tag, BaseRxLoader<T> rxLoader, CachingWeakRefSubscriber<T> subscriber) {
+        put(null, tag, rxLoader, subscriber);
     }
-    
-    public <T> void put(String id, final String tag, CachingWeakRefSubscriber<T> subscriber) {
+
+    public <T> void put(String id, final String tag, BaseRxLoader<T> rxLoader, CachingWeakRefSubscriber<T> subscriber) {
         final State state = getState(id);
+        state.rxLoader = rxLoader;
         state.subscriptionMap.put(tag, subscriber);
         if (state.saveItemMap.containsKey(tag)) {
             subscriber.setSave(new CachingWeakRefSubscriber.SaveCallback<T>() {
@@ -83,7 +92,7 @@ class RxLoaderBackendFragmentHelper implements RxLoaderBackend {
 
     @Override
     public <T> void setSave(final String tag, Observer<T> observer, WeakReference<SaveCallback<T>> saveCallbackRef) {
-        setSave(null, tag, observer, saveCallbackRef); 
+        setSave(null, tag, observer, saveCallbackRef);
     }
 
     public <T> void setSave(String id, final String tag, Observer<T> observer, WeakReference<SaveCallback<T>> saveCallbackRef) {
@@ -117,17 +126,17 @@ class RxLoaderBackendFragmentHelper implements RxLoaderBackend {
     public void unsubscribeAll() {
         unsubscribeAll(null);
     }
-    
+
     public void unsubscribeAll(String id) {
         for (CachingWeakRefSubscriber subscription : getState(id).subscriptionMap.values()) {
             subscription.unsubscribe();
         }
     }
-    
+
     private State getState(String id) {
         return id == null ? state : getChildFragmentState(id);
     }
-    
+
     private State getChildFragmentState(String id) {
         State state = childFragmentStates.get(id);
         if (state == null) {
@@ -136,8 +145,9 @@ class RxLoaderBackendFragmentHelper implements RxLoaderBackend {
         }
         return state;
     }
-    
+
     private static class State {
+        private BaseRxLoader rxLoader;
         private Map<String, CachingWeakRefSubscriber> subscriptionMap = new HashMap<String, CachingWeakRefSubscriber>();
         private Map<String, SaveItem> saveItemMap = new HashMap<String, SaveItem>();
         private Bundle savedState;
