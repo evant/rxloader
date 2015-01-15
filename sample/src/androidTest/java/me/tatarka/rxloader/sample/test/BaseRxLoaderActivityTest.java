@@ -1,8 +1,11 @@
 package me.tatarka.rxloader.sample.test;
 
 import android.app.Activity;
+import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.SmallTest;
+
+import com.robotium.solo.Solo;
 
 import me.tatarka.rxloader.RxLoader;
 import rx.Observable;
@@ -16,6 +19,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLoaderActivity> extends ActivityInstrumentationTestCase2<T> {
     TestScheduler testScheduler;
+    Solo solo;
     
     public BaseRxLoaderActivityTest(Class<T> activityClass) {
         super(activityClass);
@@ -25,13 +29,13 @@ public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLo
     protected void setUp() throws Exception {
         super.setUp();
         testScheduler = new TestScheduler();
-        getActivity();
+        solo = new Solo(getInstrumentation(), getActivity());
     }
 
     @SmallTest
     public void testLoaderStart() throws InterruptedException {
         final TestSubject<String> subject = TestSubject.create(testScheduler);
-        final RxLoader<String> loader = createLoader(subject);
+        final RxLoader<String> loader = createLoader(getActivity(), subject);
 
         assertThat(getActivity().isStarted()).isFalse().as("onStarted() not called until loader is started");
 
@@ -44,7 +48,7 @@ public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLo
     @SmallTest
     public void testLoaderStartNext() throws InterruptedException {
         final TestSubject<String> subject = TestSubject.create(testScheduler);
-        createLoader(subject).start();
+        createLoader(getActivity(), subject).start();
         getActivity().waitForStarted();
         subject.onNext("test");
         subject.onCompleted();
@@ -59,7 +63,7 @@ public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLo
     @SmallTest
     public void testLoaderStartError() throws InterruptedException {
         TestSubject<String> subject = TestSubject.create(testScheduler);
-        createLoader(subject).start();
+        createLoader(getActivity(), subject).start();
         getActivity().waitForStarted();
         subject.onError(new Exception("test"));
         subject.onCompleted();
@@ -72,7 +76,7 @@ public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLo
     @SmallTest
     public void testLoaderStartRotation() throws InterruptedException {
         TestSubject<String> subject = TestSubject.create(testScheduler);
-        createLoader(subject).start();
+        createLoader(getActivity(), subject).start();
         getActivity().waitForStarted();
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
@@ -80,7 +84,7 @@ public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLo
                 getActivity().recreate();
             }
         });
-        createLoader(subject);
+        createLoader(getActivity(), subject);
         getActivity().waitForStarted();
 
         assertThat(getActivity().isStarted()).isTrue().as("onStarted() called again after a configuration change");
@@ -89,7 +93,7 @@ public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLo
     @SmallTest
     public void testLoaderStartRotationNext() throws InterruptedException {
         TestSubject<String> subject = TestSubject.create(testScheduler);
-        createLoader(subject).start();
+        createLoader(getActivity(), subject).start();
         getActivity().waitForStarted();
         subject.onNext("test");
         subject.onCompleted();
@@ -102,7 +106,7 @@ public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLo
                 getActivity().recreate();
             }
         });
-        createLoader(subject);
+        createLoader(getActivity(), subject);
         getActivity().waitForNext();
         getActivity().waitForCompleted();
 
@@ -113,7 +117,7 @@ public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLo
     @SmallTest
     public void testLoaderStartRotationError() throws InterruptedException {
         TestSubject<String> subject = TestSubject.create(testScheduler);
-        createLoader(subject).start();
+        createLoader(getActivity(), subject).start();
         getActivity().waitForStarted();
         subject.onError(new Exception("test"));
         testScheduler.triggerActions();
@@ -124,7 +128,7 @@ public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLo
                 getActivity().recreate();
             }
         });
-        createLoader(subject);
+        createLoader(getActivity(), subject);
         getActivity().waitForError();
 
         assertThat(getActivity().<String>getError()).hasMessage("test").as("onError() is called again after a configuration change");
@@ -133,7 +137,7 @@ public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLo
     @SmallTest
     public void testLoaderStartNextAfterDestroyed() throws InterruptedException {
         TestSubject<String> subject = TestSubject.create(testScheduler);
-        createLoader(subject).start();
+        createLoader(getActivity(), subject).start();
         getActivity().waitForStarted();
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
@@ -153,15 +157,55 @@ public abstract class BaseRxLoaderActivityTest<T extends Activity & TestableRxLo
         // Needed to recreate the activity since the test runner expects it to exist. 
         getActivity();
     }
+    
+    @SmallTest
+    public void testLoaderStartNextRotationClear() throws InterruptedException {
+        TestSubject<String> subject = TestSubject.create(testScheduler);
+        RxLoader<String> loader = createLoader(getActivity(), subject).start();
+        getActivity().waitForStarted();
+        subject.onNext("test");
+        subject.onCompleted();
+        testScheduler.triggerActions();
+        getActivity().waitForNext();
+        getActivity().waitForCompleted();
+        loader.clear();
+        T newActivity = recreateActivity();
+        createLoader(newActivity, subject);
+        getInstrumentation().waitForIdleSync();
+        Thread.sleep(500); // Give loader a chance to deliver the result.
 
-    protected <T> RxLoader<T> createLoader(final Observable<T> observable) {
+        assertThat(newActivity.<String>getNext()).isNull();
+        assertThat(newActivity.isCompleted()).isFalse().as("onCompleted() is not called if the result was cleared");
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        solo.finishOpenedActivities();
+    }
+
+    protected <RT> RxLoader<RT> createLoader(final T activity, final Observable<RT> observable) {
         final RxLoader<?>[] currentLoader = new RxLoader<?>[1];
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
-                currentLoader[0] = getActivity().createLoader(observable);
+                currentLoader[0] = activity.createLoader(observable);
             }
         });
-        return (RxLoader<T>) currentLoader[0];
+        return (RxLoader<RT>) currentLoader[0];
+    }
+    
+    protected T recreateActivity() {
+        Instrumentation.ActivityMonitor activityMonitor = new Instrumentation.ActivityMonitor(getActivity().getClass().getName(), null, false);
+        getInstrumentation().addMonitor(activityMonitor);
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().recreate();
+            }
+        });
+        activityMonitor.waitForActivity();
+        getInstrumentation().waitForIdleSync();
+        return (T) activityMonitor.getLastActivity();
     }
 }

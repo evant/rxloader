@@ -67,6 +67,11 @@ public class RxLoaderBackendFragment extends Fragment implements RxLoaderBackend
         helper.unsubscribeAll();
     }
 
+    @Override
+    public void clearAll() {
+        helper.clearAll();
+    }
+
     public RxLoaderBackendFragmentHelper getHelper() {
         return helper;
     }

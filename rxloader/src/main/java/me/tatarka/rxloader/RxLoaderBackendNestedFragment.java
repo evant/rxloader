@@ -122,6 +122,14 @@ public class RxLoaderBackendNestedFragment extends Fragment implements RxLoaderB
     }
 
     @Override
+    public void clearAll() {
+        RxLoaderBackendFragmentHelper helper = getHelper();
+        if (helper != null) {
+            helper.clearAll(getStateId());
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         RxLoaderBackendFragmentHelper helper = getHelper();

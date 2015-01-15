@@ -22,7 +22,7 @@ public abstract class BaseRxLoaderActivityWithFragmentTest<T extends Activity & 
     @SmallTest
     public void testLoaderStartRemoveFragment() throws InterruptedException {
         TestSubject<String> subject = TestSubject.create(testScheduler);
-        createLoader(subject).start();
+        createLoader(getActivity(), subject).start();
         getActivity().waitForStarted();
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
@@ -43,7 +43,7 @@ public abstract class BaseRxLoaderActivityWithFragmentTest<T extends Activity & 
     @SmallTest
     public void testLoaderStartDetachFragment() throws InterruptedException {
         TestSubject<String> subject = TestSubject.create(testScheduler);
-        createLoader(subject).start();
+        createLoader(getActivity(), subject).start();
         getActivity().waitForStarted();
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
@@ -64,7 +64,7 @@ public abstract class BaseRxLoaderActivityWithFragmentTest<T extends Activity & 
     @SmallTest
     public void testLoaderStartDetachAndAttachFragment() throws InterruptedException {
         TestSubject<String> subject = TestSubject.create(testScheduler);
-        createLoader(subject).start();
+        createLoader(getActivity(), subject).start();
         getActivity().waitForStarted();
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
@@ -84,7 +84,7 @@ public abstract class BaseRxLoaderActivityWithFragmentTest<T extends Activity & 
             }
         });
         getInstrumentation().waitForIdleSync();
-        createLoader(subject);
+        createLoader(getActivity(), subject);
         getActivity().waitForNext();
         getActivity().waitForCompleted();
 

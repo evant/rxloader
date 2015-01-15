@@ -96,6 +96,15 @@ class CachingWeakRefSubscriber<T> implements Observer<T>, Subscription {
         return subscriber == null;
     }
 
+    public void clear() {
+        unsubscribe();
+        isComplete = false;
+        isError = false;
+        hasValue = false;
+        error = null;
+        lastValue = null;
+    }
+
     interface SaveCallback<T> {
         void onNext(T value);
     }

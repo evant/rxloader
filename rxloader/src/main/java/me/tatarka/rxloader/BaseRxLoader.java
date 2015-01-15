@@ -74,4 +74,16 @@ abstract class BaseRxLoader<T> {
         }
         return false;
     }
+
+    /**
+     * Clears the loader's state. After a configuration change you will no longer received cached
+     * values and {@link #start(rx.Observable)} will cause the observable to be executed again.
+     * This is useful if the loader is handling transient state (showing a Toast for example).
+     */
+    public void clear() {
+        CachingWeakRefSubscriber<T> subscriber = manager.get(tag);
+        if (subscriber != null) {
+            subscriber.clear();
+        }
+    }
 }

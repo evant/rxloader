@@ -20,7 +20,7 @@ android {
     
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
@@ -38,4 +38,5 @@ dependencies {
     androidTestCompile('com.squareup:fest-android:1.0.8') {
         exclude group: 'com.android.support', module: 'support-v4'
     }
+    androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.2.1'
 }

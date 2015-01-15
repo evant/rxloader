@@ -194,8 +194,19 @@ public class RxLoaderManager {
 
     /**
      * Unsubscribes all observers.
+     *
+     * @see {@link BaseRxLoader#unsubscribe()}
      */
     public void unsubscribeAll() {
         manager.unsubscribeAll();
+    }
+
+    /**
+     * Clears all loaders.
+     *
+     * @see {@link BaseRxLoader#clear()} ()}
+     */
+    public void clearAll() {
+        manager.clearAll();
     }
 }

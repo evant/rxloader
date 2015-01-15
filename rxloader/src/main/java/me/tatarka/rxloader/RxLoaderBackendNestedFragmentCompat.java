@@ -126,6 +126,14 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
     }
 
     @Override
+    public void clearAll() {
+        RxLoaderBackendFragmentHelper helper = getHelper();
+        if (helper != null) {
+            helper.clearAll(getStateId());
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         RxLoaderBackendFragmentHelper helper = getHelper();

@@ -127,9 +127,20 @@ class RxLoaderBackendFragmentHelper implements RxLoaderBackend {
         unsubscribeAll(null);
     }
 
+    @Override
+    public void clearAll() {
+        clearAll(null);
+    }
+
     public void unsubscribeAll(String id) {
         for (CachingWeakRefSubscriber subscription : getState(id).subscriptionMap.values()) {
             subscription.unsubscribe();
+        }
+    }
+    
+    public void clearAll(String id) {
+        for (CachingWeakRefSubscriber subscription : getState(id).subscriptionMap.values()) {
+            subscription.clear();
         }
     }
 
