@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.netflix.rxjava:rxjava-android:0.20.4'
+    compile 'io.reactivex:rxandroid:0.24.0'
     provided 'android:android:4.3_r2'
     provided 'android.support:compatibility-v4:21.0.0'
 }
