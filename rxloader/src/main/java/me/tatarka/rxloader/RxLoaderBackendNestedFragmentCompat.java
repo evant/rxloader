@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 import rx.Observer;
 
@@ -20,14 +22,11 @@ import rx.Observer;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxLoaderBackend {
     private WeakReference<RxLoaderBackendFragmentHelper> helperRef;
+    private List<PendingPut<?>> pendingPuts = new ArrayList<PendingPut<?>>();
     private boolean hasSavedState;
     private boolean wasDetached;
     private String stateId;
-
-    public void setHelper(RxLoaderBackendFragmentHelper helper) {
-        helperRef = new WeakReference<RxLoaderBackendFragmentHelper>(helper);
-    }
-
+    
     private RxLoaderBackendFragmentHelper getHelper() {
         if (helperRef != null) {
             return helperRef.get();
@@ -47,9 +46,18 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
             }
 
             RxLoaderBackendFragmentHelper helper = backendFragment.getHelper();
+            setHelper(helper);
             helperRef = new WeakReference<RxLoaderBackendFragmentHelper>(helper);
             return helper;
         }
+    }
+    
+    private void setHelper(RxLoaderBackendFragmentHelper helper) {
+        helperRef = new WeakReference<RxLoaderBackendFragmentHelper>(helper);
+        for (PendingPut pendingPut: pendingPuts) {
+            put(pendingPut.tag, pendingPut.rxLoader, pendingPut.subscriber);
+        }
+        pendingPuts.clear();
     }
 
     @Override
@@ -79,6 +87,7 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
         if (helper != null) {
             helper.onDetach(getStateId());
         }
+        pendingPuts.clear();
         wasDetached = true;
     }
 
@@ -106,6 +115,8 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
         RxLoaderBackendFragmentHelper helper = getHelper();
         if (helper != null) {
             helper.put(getStateId(), tag, wasDetached ? null : rxLoader, subscriber);
+        } else {
+            pendingPuts.add(new PendingPut<T>(tag, rxLoader, subscriber));
         }
     }
 
@@ -161,5 +172,17 @@ public class RxLoaderBackendNestedFragmentCompat extends Fragment implements RxL
         }
 
         return stateId;
+    }
+    
+    private static class PendingPut<T> {
+        String tag;
+        BaseRxLoader<T> rxLoader;
+        CachingWeakRefSubscriber<T> subscriber;
+
+        private PendingPut(String tag, BaseRxLoader<T> rxLoader, CachingWeakRefSubscriber<T> subscriber) {
+            this.tag = tag;
+            this.rxLoader = rxLoader;
+            this.subscriber = subscriber;
+        }
     }
 }
