@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-  compile 'me.tatarka.rxloader:rxloader:1.0.2'
+  compile 'me.tatarka.rxloader:rxloader:1.1.0'
 }
 ```
 
@@ -217,6 +217,33 @@ loaderManager.create(observable, callback)
       // Return the value from the bundle.
     }
   }).start();
+```
+
+### Transient State
+It may be the case that the result returned by your observable is transient and you don't want it to
+show any more after it's been handled (a Toast for example). In that case, you can call `clear()` on
+the loader to reset it so that it will no longer be delivered on configuration changes.
+```java
+final RxLoader<Result> loader = loaderManager.create(
+  asyncThatReturnsObservable(),
+  new RxLoaderObserver<Result>() {
+    @Override
+    public void onStarted() {
+      // Show your progress indicator.
+    }
+
+    @Override
+    public void onNext(Result result) {
+      // Hide your progress indicator and show the result.
+    }
+
+    @Override
+    public void onError(Throwable error) {
+        Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+        loader.clear(); // onError() won't get called again when you rotate. 
+    }
+  }
+).start(); // Make sure you call this to kick things off.
 ```
 
 ### A note about usage
