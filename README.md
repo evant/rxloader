@@ -27,7 +27,7 @@ dependencies {
 <dependency>
   <groupId>me.tatarka.rxloader</groupId>
   <artifactId>rxloader</artifactId>
-  <version>1.0.2</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
