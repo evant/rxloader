@@ -9,14 +9,14 @@ import android.os.Parcelable;
  *
  * @param <T> the value type
  */
-public class ParcelableSaveCallback<T> implements SaveCallback<T> {
+public class ParcelableSaveCallback<T extends Parcelable> implements SaveCallback<T> {
     @Override
     public void onSave(String key, T value, Bundle outState) {
-        outState.putParcelable(key, (Parcelable) value);
+        outState.putParcelable(key, value);
     }
 
     @Override
     public T onRestore(String key, Bundle savedState) {
-        return (T) savedState.getParcelable(key);
+        return savedState.getParcelable(key);
     }
 }
