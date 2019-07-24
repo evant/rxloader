@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-  compile 'me.tatarka.rxloader:rxloader:1.1.0'
+  implementation 'me.tatarka.rxloader:rxloader:1.1.0'
 }
 ```
 
@@ -151,7 +151,7 @@ callback. This is necessary to handle configuration changes properly if the
 button was pressed first.
 
 ### Passing arguments
-If you want to pass arguments to your observable, you can use one of the overloads that takes a `Func1<Arg, Observable<T>>` or `Func2<Arg1, Arg2, Observable<T>>``.
+If you want to pass arguments to your observable, you can use one of the overloads that takes a `Func1<Arg, Observable<T>>` or `Func2<Arg1, Arg2, Observable<T>>`.
 
 ```java
 final RxLoader1<String, String> inputLoader = loaderManager.create(
