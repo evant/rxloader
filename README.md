@@ -1,3 +1,6 @@
+## [Deprecated]
+There are better solutions out there, would recommend using [LiveData](https://developer.android.com/topic/libraries/architecture/livedata) or [AutoDispose](https://github.com/uber/AutoDispose) with rx.
+
 rxloader
 ========
 Asynchronous operations in Android are very hard to get right due to the
