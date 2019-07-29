@@ -12,7 +12,9 @@ import android.os.Parcelable;
 public class ParcelableSaveCallback<T> implements SaveCallback<T> {
     @Override
     public void onSave(String key, T value, Bundle outState) {
-        outState.putParcelable(key, (Parcelable) value);
+        if (value != null) {
+            outState.putParcelable(key, (Parcelable) value);
+        }
     }
 
     @Override
